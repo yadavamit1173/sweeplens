@@ -17,16 +17,22 @@ function toNumber(value: number | string | undefined): number | undefined {
 }
 
 export function normalizeCandles(rawCandles: RawCandle[]): Candle[] {
-  const candles = rawCandles
-    .map((raw) => ({
-      timestamp: toNumber(raw.timestamp) ?? Number.NaN,
-      open: toNumber(raw.open) ?? Number.NaN,
-      high: toNumber(raw.high) ?? Number.NaN,
-      low: toNumber(raw.low) ?? Number.NaN,
-      close: toNumber(raw.close) ?? Number.NaN,
-      volume: toNumber(raw.volume),
-    }))
-    .sort((a, b) => a.timestamp - b.timestamp)
+  const parsedCandles = rawCandles.map((raw) => ({
+    timestamp: toNumber(raw.timestamp) ?? Number.NaN,
+    open: toNumber(raw.open) ?? Number.NaN,
+    high: toNumber(raw.high) ?? Number.NaN,
+    low: toNumber(raw.low) ?? Number.NaN,
+    close: toNumber(raw.close) ?? Number.NaN,
+    volume: toNumber(raw.volume),
+  }))
+
+  const candlesByTimestamp = new Map<number, Candle>()
+
+  for (const candle of parsedCandles) {
+    candlesByTimestamp.set(candle.timestamp, candle)
+  }
+
+  const candles = [...candlesByTimestamp.values()].sort((a, b) => a.timestamp - b.timestamp)
 
   const validation = validateCandles(candles)
 

@@ -29,6 +29,19 @@ describe('detectSwings', () => {
     expect(result.lows).toEqual([])
   })
 
+  it('marks equal-height double tops inside the lookback window as swing highs', () => {
+    const doubleTopCandles: Candle[] = [
+      { timestamp: 1, open: 100, high: 101, low: 99, close: 100 },
+      { timestamp: 2, open: 100, high: 110, low: 99, close: 108 },
+      { timestamp: 3, open: 108, high: 110, low: 100, close: 104 },
+      { timestamp: 4, open: 104, high: 105, low: 98, close: 99 },
+    ]
+
+    const result = detectSwings(doubleTopCandles, 1)
+
+    expect(result.highs.map((swing) => swing.index)).toEqual([1, 2])
+  })
+
   it('rejects invalid lookback values', () => {
     expect(() => detectSwings(candles, 0)).toThrow('Swing lookback must be a positive integer')
   })

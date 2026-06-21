@@ -27,8 +27,10 @@ export function detectSwings(candles: Candle[], lookback: number): SwingDetectio
     const right = candles.slice(index + 1, index + lookback + 1)
     const surrounding = [...left, ...right]
 
-    const isSwingHigh = surrounding.every((nearby) => candle.high > nearby.high)
-    const isSwingLow = surrounding.every((nearby) => candle.low < nearby.low)
+    const isSwingHigh =
+      surrounding.every((nearby) => candle.high >= nearby.high) && surrounding.some((nearby) => candle.high > nearby.high)
+    const isSwingLow =
+      surrounding.every((nearby) => candle.low <= nearby.low) && surrounding.some((nearby) => candle.low < nearby.low)
 
     if (isSwingHigh) {
       highs.push({

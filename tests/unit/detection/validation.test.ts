@@ -33,4 +33,17 @@ describe('candle validation and normalization', () => {
       { timestamp: 2, open: 104, high: 106, low: 101, close: 102, volume: 2000 },
     ])
   })
+
+  it('deduplicates provider candles by timestamp using the latest occurrence', () => {
+    const candles = normalizeCandles([
+      { timestamp: '1', open: '100', high: '105', low: '99', close: '104' },
+      { timestamp: '1', open: '104', high: '108', low: '103', close: '107', volume: '2500' },
+      { timestamp: '2', open: '107', high: '109', low: '106', close: '108' },
+    ])
+
+    expect(candles).toEqual([
+      { timestamp: 1, open: 104, high: 108, low: 103, close: 107, volume: 2500 },
+      { timestamp: 2, open: 107, high: 109, low: 106, close: 108, volume: undefined },
+    ])
+  })
 })
